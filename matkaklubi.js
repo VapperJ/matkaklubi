@@ -11,7 +11,8 @@ let matkadeAndmed = [
         nimi: 'Motomatk',
         lyhikirjeldus: 'See seiklus ühedab sinu ja su kaherattalise!!',
         url: 'vaataLähemalt.html',
-        htmlId: '#esimReg',
+       // htmlId: '#esimReg',
+        id: "motomatk",
         sisu: [{
             pildiUrl: './assets/moto.jpg',
             nimi: 'Motomatk',
@@ -24,11 +25,13 @@ let matkadeAndmed = [
         nimi: 'Mäematk',
         lyhikirjeldus: 'matk kõrgele mäele',
         url: 'vaataLähemalt.html',
-        htmId: '#teineReg',
+        htmId: '#esimReg',
+        id: 'mäematk',
         sisu:[{
             pildiUrl: './assets/mägi01.jpg',
             nimi: 'Mäematk',
             lyhikirjeldus: 'matk kõrgele mäele',
+            url: './vaataLähemalt.html',
         }]
     },
     {
@@ -56,7 +59,7 @@ function matkakaart(matkaObjektid) {
             <div class="card-body">
                 <div class="card-title">${matkaObjektid.nimi}</div>
                 <div class="card-text">${matkaObjektid.lyhikirjeldus}</div>
-                <a href="${matkaObjektid.url}" class="btn btn-primary">Vaata lähemalt</a>
+                <a href="${matkaObjektid.url}?id=${matkaObjektid.id}" class="btn btn-primary">Vaata lähemalt</a>
             </div>
         </div>  `;
     return kaart;
@@ -93,17 +96,31 @@ if (matkaKaardid) {
     matkaKaardid.innerHTML = matkadeSisu;
 }
 
-for (let i = 0; i < matkadeAndmed.length; i++) {
-    let matkaElement = document.querySelector(matkadeAndmed[i].htmlId);
-    if(matkaElement){
-        let matkadeSisu = '';
-        for (let j = 0; j < matkadeAndmed[i].sisu.length; j++) {
-            matkadeSisu += matkaSisukaart(matkadeAndmed[i].sisu[j]);
-        }
-        matkaElement.innerHTML = matkadeSisu;
-    }
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    const regex = new RegExp("[\\?&]" + name + "=([^&#]*)"), results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+let matkaElement = document.querySelector("#esimReg");
+if(matkaElement){
+    let id = getParameterByName('id');
+    if(id !== ""){
+        let matkadeSisu = '';
+        let matk = matkadeAndmed.find((matk) => matk.id === id);
+        if(matk) {
+            for (let j = 0; j < matk.sisu.length; j++) {
+                matkadeSisu += matkaSisukaart(matk.sisu[j]);
+            }
+        }
+        else {
+            window.location.href = "./notFound.html"
+        }
 
+        matkaElement.innerHTML = matkadeSisu;
+    }
+
+
+}
 
 
